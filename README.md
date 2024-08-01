@@ -1,9 +1,10 @@
 # GAN-Implementation
 
 ## Intro
-Generative Adversarial Networks (GANs) are a class of machine learning frameworks.
-<br>GANs consist of two neural networks, the generator and the discriminator, which compete against each other.
-<br>The generator creates fake data, while the discriminator attempts to distinguish between real and fake data. This adversarial process continues until the generator produces data that is indistinguishable from real data.
+Generative Adversarial Networks (GANs) are a type of machine learning model.
+<br>They involve two neural networks: the generator and the discriminator. 
+<br>These networks compete with each other, with the generator creating synthetic data and the discriminator trying to identify whether the data is real or fake.
+<br>This adversarial process helps the generator improve until it produces data that is nearly indistinguishable from real data.
 
 ## How to Run
 
