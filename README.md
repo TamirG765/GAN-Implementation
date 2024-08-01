@@ -13,5 +13,5 @@ Generative Adversarial Networks (GANs) are a class of machine learning framework
 2. **Activate the new environment:**
     `conda activate gan-env`
 
-### Step 2: Install Dependencies
-    `pip install -r requirements.txt`
+### Step 2: Install Dependencies:
+`pip install -r requirements.txt`
