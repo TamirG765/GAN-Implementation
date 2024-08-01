@@ -6,7 +6,6 @@ from torchvision import datasets
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torch.nn as nn
-import torch.nn.functional as F
 import torch
 import tqdm
 from pytorch_fid.fid_score import calculate_fid_given_paths
@@ -29,13 +28,24 @@ def main():
     opt = parser.parse_args()
     print("Args: ", opt)
 
-    # Check CUDA availability and set the device accordingly
+    # Check CUDA / MPS availability and set the device accordingly
     if torch.backends.mps.is_available():
         device = torch.device("mps")
-        print(f"MPS device is available. {device}")
+        print(f"MPS device is available: {device}")
+    elif torch.cuda.is_available():
+        device = torch.device("cuda")
+        print(f"CUDA device is available: {device}")
     else:
         device = torch.device("cpu")
-        print("MPS device is not available. Using CPU.")
+        print("CUDA/MPS device is not available. Using CPU.")
+
+    # Tensor type
+    if device == "mps" and torch.backends.mps.is_available():
+        Tensor = torch.mps.FloatTensor
+    elif device == "cuda" and torch.cuda.is_available():
+        Tensor = torch.cuda.FloatTensor
+    else:
+        Tensor = torch.FloatTensor
 
     # PATH for dataset
     PATH = '/Users/tamir_gez/Documents/Study/סמסטר ב שנה ד/Machine Learning/ML Project/celebA'
@@ -116,9 +126,6 @@ def main():
         print("Generator on:", next(generator.parameters()).device)
         print("Discriminator on:", next(discriminator.parameters()).device)
 
-    # Print initial device assignment for models
-    print_models_device()
-
     # Configure data loader for CelebA dataset
     dataloader = DataLoader(
         datasets.ImageFolder(
@@ -136,14 +143,6 @@ def main():
     # Optimizers
     optimizer_G = torch.optim.Adam(generator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
     optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=opt.lr, betas=(opt.b1, opt.b2))
-
-    # Tensor type
-    if device == "mps":
-        Tensor = torch.mps.FloatTensor
-    elif device == "cuda" and torch.cuda.is_available():
-        Tensor = torch.cuda.FloatTensor
-    else:
-        Tensor = torch.FloatTensor
 
     # Load checkpoint if specified
     if opt.load_checkpoint:
