@@ -1,6 +1,6 @@
 # GAN-Implementation 
 
-## Intro 🤖 VS 🤖
+## Intro - 🤖 VS 🤖
 Generative Adversarial Networks (GANs) are a type of machine learning model.
 <br>They involve two neural networks: the generator and the discriminator. 
 <br>These networks compete with each other, with the generator creating synthetic data and the discriminator trying to identify whether the data is real or fake.
