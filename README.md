@@ -15,3 +15,6 @@ Generative Adversarial Networks (GANs) are a class of machine learning framework
 
 ### Step 2: Install Dependencies:
 <br>`pip install -r requirements.txt`
+
+### Step 3: Run the Code:
+<br>`python GAN.py
