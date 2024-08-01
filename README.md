@@ -1,12 +1,12 @@
-# GAN-Implementation
+# GAN-Implementation 
 
-## Intro
+## Intro 🤖 VS 🤖
 Generative Adversarial Networks (GANs) are a type of machine learning model.
 <br>They involve two neural networks: the generator and the discriminator. 
 <br>These networks compete with each other, with the generator creating synthetic data and the discriminator trying to identify whether the data is real or fake.
 <br>This adversarial process helps the generator improve until it produces data that is nearly indistinguishable from real data.
 
-## How to Run
+## How to Run the Project
 
 ### Step 1: Create and Activate a New Conda Environment
 
