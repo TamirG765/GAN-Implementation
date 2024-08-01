@@ -9,6 +9,7 @@ Generative Adversarial Networks (GANs) are a type of machine learning model.
 ## How to Run
 
 ### Step 1: Create and Activate a New Conda Environment
+
 #### 1. Create a new conda environment with Python 3.9.13:
 `conda create --name gan-env python=3.9.13`
 #### 2. Activate the new environment:
@@ -17,5 +18,9 @@ Generative Adversarial Networks (GANs) are a type of machine learning model.
 ### Step 2: Install Dependencies:
 `pip install -r requirements.txt`
 
-### Step 3: Run the Code:
+### Step 3: Download the Training Set
+The training set is very large and can be downloaded from the following link:
+[Download CelebA Dataset](https://www.kaggle.com/datasets/jessicali9530/celeba-dataset)
+
+### Step 4: Run the Code:
 `python GAN.py`
