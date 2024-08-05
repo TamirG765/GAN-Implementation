@@ -15,8 +15,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--n_epochs", type=int, default=10, help="number of epochs of training")
     parser.add_argument("--batch_size", type=int, default=32, help="size of the batches")
-    parser.add_argument("--lr", type=float, default=0.0002, help="adam: learning rate")
-    parser.add_argument("--b1", type=float, default=0.5, help="adam: decay of first order momentum of gradient")
+    parser.add_argument("--lr", type=float, default=0.0001, help="adam: learning rate")
+    parser.add_argument("--b1", type=float, default=0.9, help="adam: decay of first order momentum of gradient")
     parser.add_argument("--b2", type=float, default=0.999, help="adam: decay of second order momentum of gradient")
     parser.add_argument("--n_cpu", type=int, default=1, help="number of cpu threads to use during batch generation")
     parser.add_argument("--latent_dim", type=int, default=100, help="dimensionality of the latent space")
@@ -66,7 +66,7 @@ def main():
         # Calculate FID score
         fid = calculate_fid_given_paths([real_images_path, temp_folder], batch_size=opt.batch_size, device=device, dims=2048)
         
-        # Cleanup: very important to switch back to train mode
+        # Switch back to train mode
         generator.train()
         return fid
 
@@ -184,7 +184,7 @@ def main():
                 d_loss = (real_loss + fake_loss) / 2
                 d_loss.backward()
                 optimizer_D.step()
-                batches_done = epoch * len(dataloader) + i
+                
                 pbar.update(1)
                 pbar.set_postfix({'D loss': d_loss.item(), 'G loss': g_loss.item()})
 
