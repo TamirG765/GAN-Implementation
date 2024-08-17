@@ -22,7 +22,6 @@ def main():
     parser.add_argument("--latent_dim", type=int, default=100, help="dimensionality of the latent space")
     parser.add_argument("--img_size", type=int, default=64, help="size of each image dimension")
     parser.add_argument("--channels", type=int, default=3, help="number of image channels")
-    parser.add_argument("--sample_interval", type=int, default=400, help="interval between image samples")
     parser.add_argument("--checkpoint_interval", type=int, default=10, help="interval between saving checkpoints")
     parser.add_argument("--load_checkpoint", action='store_true', help="path to the checkpoint file to load")
     opt = parser.parse_args()
@@ -121,11 +120,6 @@ def main():
     generator = Generator().to(device)
     discriminator = Discriminator().to(device)
 
-    # Function to print model devices for verification
-    def print_models_device():
-        print("Generator on:", next(generator.parameters()).device)
-        print("Discriminator on:", next(discriminator.parameters()).device)
-
     # Configure data loader for CelebA dataset
     dataloader = DataLoader(
         datasets.ImageFolder(
@@ -192,7 +186,7 @@ def main():
             vutils.save_image(gen_imgs.data[:25], f"output/{epoch}_.png", nrow=5, normalize=True)
             temp_folder = 'temp_gen_images'
             os.makedirs(temp_folder, exist_ok=True)  # Ensure the directory exists
-            real_images_path = 'celebA/img_align_celeba/img_align_celeba'  # Assuming the path to real images
+            real_images_path = 'celebA/img_align_celeba/img_align_celeba' 
             fid_value = compute_fid(generator, real_images_path, temp_folder, device)
             print(f'Epoch {epoch + 1}: FID Score = {fid_value}')
             
