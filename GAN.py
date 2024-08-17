@@ -7,11 +7,13 @@ from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torch.nn as nn
 import torch
-import tqdm
-from pytorch_fid.fid_score import calculate_fid_given_paths
-import torchvision.utils as vutils
+import tqdm # for progress bar
+from pytorch_fid.fid_score import calculate_fid_given_paths # for FID score
+import torchvision.utils as vutils # for saving images
 
 def main():
+
+    # parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--n_epochs", type=int, default=10, help="number of epochs of training")
     parser.add_argument("--batch_size", type=int, default=32, help="size of the batches")
@@ -22,7 +24,6 @@ def main():
     parser.add_argument("--latent_dim", type=int, default=100, help="dimensionality of the latent space")
     parser.add_argument("--img_size", type=int, default=64, help="size of each image dimension")
     parser.add_argument("--channels", type=int, default=3, help="number of image channels")
-    parser.add_argument("--checkpoint_interval", type=int, default=10, help="interval between saving checkpoints")
     parser.add_argument("--load_checkpoint", action='store_true', help="path to the checkpoint file to load")
     opt = parser.parse_args()
     print("Args: ", opt)
@@ -38,7 +39,7 @@ def main():
         device = torch.device("cpu")
         print("CUDA/MPS device is not available. Using CPU.")
 
-    # Tensor type
+    # Tensor type according to the device
     if device == "mps" and torch.backends.mps.is_available():
         Tensor = torch.mps.FloatTensor
     elif device == "cuda" and torch.cuda.is_available():
@@ -50,10 +51,11 @@ def main():
     PATH = '/Users/tamir_gez/Documents/Study/סמסטר ב שנה ד/Machine Learning/ML Project/celebA'
 
     def compute_fid(generator, real_images_path, temp_folder, device):
-        # Ensure generator is in eval mode
+        
+        # Ensure generator is in eval mode - to ensure that batchnorm layers are in eval mode
         generator.eval()
         
-        # Generate images and save to temporary directory
+        # Generate images and save to temporary directory 
         with torch.no_grad():
             z = torch.randn(opt.batch_size, opt.latent_dim, device=device)
             fake_images = generator(z)
@@ -65,13 +67,14 @@ def main():
         # Calculate FID score
         fid = calculate_fid_given_paths([real_images_path, temp_folder], batch_size=opt.batch_size, device=device, dims=2048)
         
-        # Switch back to train mode
+        # Switch back to train mode - to ensure that batchnorm layers are in train mode
         generator.train()
         return fid
 
     # Image shape for the network
     img_shape = (opt.channels, opt.img_size, opt.img_size)
 
+    # Create the generator
     class Generator(nn.Module):
         def __init__(self):
             super(Generator, self).__init__()
@@ -96,6 +99,7 @@ def main():
             img = img.view(img.size(0), *img_shape)
             return img
 
+    # Create the discriminator
     class Discriminator(nn.Module):
         def __init__(self):
             super(Discriminator, self).__init__()
@@ -170,7 +174,7 @@ def main():
                 g_loss = adversarial_loss(discriminator(gen_imgs), valid)
                 g_loss.backward()
                 optimizer_G.step()
-
+                
                 # Train Discriminator
                 optimizer_D.zero_grad()
                 real_loss = adversarial_loss(discriminator(real_imgs), valid)
@@ -179,9 +183,10 @@ def main():
                 d_loss.backward()
                 optimizer_D.step()
                 
+                # Update progress bar
                 pbar.update(1)
                 pbar.set_postfix({'D loss': d_loss.item(), 'G loss': g_loss.item()})
-
+            
             # Compute and display FID score at the end of each epoch
             vutils.save_image(gen_imgs.data[:25], f"output/{epoch}_.png", nrow=5, normalize=True)
             temp_folder = 'temp_gen_images'
@@ -190,7 +195,7 @@ def main():
             fid_value = compute_fid(generator, real_images_path, temp_folder, device)
             print(f'Epoch {epoch + 1}: FID Score = {fid_value}')
             
-            # Save checkpoint
+            # Configure the checkpoint to be saved and save it
             checkpoint = {
                 'epoch': epoch + 1,  # plus one because epochs are zero-indexed
                 'generator_state_dict': generator.state_dict(),
