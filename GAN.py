@@ -56,7 +56,7 @@ def main():
         generator.eval()
         
         # Generate images and save to temporary directory 
-        with torch.no_grad():
+        with torch.no_grad(): # no gradient calculation - saves memory and speeds up computation
             z = torch.randn(opt.batch_size, opt.latent_dim, device=device)
             fake_images = generator(z)
             fake_images = (fake_images + 1) / 2  # Rescale images to [0, 1]
